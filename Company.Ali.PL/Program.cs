@@ -1,3 +1,9 @@
+using Company.Ali.BLL.Interfaces;
+using Company.Ali.BLL.Repositories;
+using Company.Ali.DAL.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+
 namespace Company.Ali.PL
 {
     public class Program
@@ -8,6 +14,12 @@ namespace Company.Ali.PL
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>(); // Allow DI For  DepartmentRepository
+            builder.Services.AddDbContext<CompanyDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            } ); // Allow DI For CompanyDbContext
 
             var app = builder.Build();
 
