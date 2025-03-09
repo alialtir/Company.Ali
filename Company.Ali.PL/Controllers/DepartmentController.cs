@@ -58,5 +58,16 @@ namespace Company.Ali.PL.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public IActionResult Details(int Id)
+        {
+
+            var departments = _departmentrepository.Get(Id);
+
+
+
+            return View(departments);
+        }
     }
 }
