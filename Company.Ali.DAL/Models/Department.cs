@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Company.Ali.DAL.Models
 {
-    public class Department
+    public class Department : BaseEntity
     {
-        public int Id { get; set; }
+    
 
         public string Code { get; set; }
 
