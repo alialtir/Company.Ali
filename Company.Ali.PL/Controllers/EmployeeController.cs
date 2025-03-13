@@ -78,25 +78,55 @@ namespace Company.Ali.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? Id)
         {
-            //if (Id is null) return BadRequest("Invalid Id"); //400
+            if (Id is null) return BadRequest("Invalid Id"); //400
 
-            //var employee = _employeeRepository.Get(Id.Value);
+            var employee = _employeeRepository.Get(Id.Value);
 
-            //if (employee is null) return NotFound(new { statusCode = 404, message = $"Department With Id : {Id} is not Found" });
+            if (employee is null) return NotFound(new { statusCode = 404, message = $"employee With Id : {Id} is not Found" });
 
-            return Details(Id, "Edit");
+            var employeesDto = new CreateEmployeeDto()
+            {
+              
+                Name = employee.Name,
+                Address = employee.Address,
+                Age = employee.Age,
+                CreateAt = employee.CreateAt,
+                HiringDate = employee.HiringDate,
+                Email = employee.Email,
+                IsActive = employee.IsActive,
+                IsDeleted = employee.IsDeleted,
+                Phone = employee.Phone,
+                Salary = employee.Salary
+            };
+
+            return View(employeesDto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int Id, Employee employee)
+        public IActionResult Edit([FromRoute] int Id, CreateEmployeeDto model)
         {
 
             if (ModelState.IsValid)
             {
-                if (Id != employee.Id) return BadRequest(); // 400
+                //if (Id != employee.Id) return BadRequest(); // 400
 
-                var count = _employeeRepository.Update(employee);
+                var employees = new Employee()
+                {
+                    Id = Id,
+                    Name = model.Name,
+                    Address = model.Address,
+                    Age = model.Age,
+                    CreateAt = model.CreateAt,
+                    HiringDate = model.HiringDate,
+                    Email = model.Email,
+                    IsActive = model.IsActive,
+                    IsDeleted = model.IsDeleted,
+                    Phone = model.Phone,
+                    Salary = model.Salary
+                };
+
+                var count = _employeeRepository.Update(employees);
 
                 if (count > 0)
                 {
@@ -104,7 +134,7 @@ namespace Company.Ali.PL.Controllers
                 }
             }
 
-            return View(employee);
+            return View(model);
         }
 
         [HttpGet]
