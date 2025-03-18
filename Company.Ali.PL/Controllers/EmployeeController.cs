@@ -1,25 +1,57 @@
-﻿using Company.Ali.BLL.Interfaces;
+﻿using AutoMapper;
+using Company.Ali.BLL.Interfaces;
 using Company.Ali.DAL.Models;
 using Company.Ali.PL.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 
 namespace Company.Ali.PL.Controllers
 {
     public class EmployeeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository;
+        //private readonly IDepartmentRepository _departmentRepository;
+        private readonly IMapper _mapper;
 
         // ASK CLR Create Object From DepartmentRepository
-        public EmployeeController(IEmployeeRepository employeeRepository)
+        public EmployeeController(IEmployeeRepository 
+            employeeRepository , 
+            //IDepartmentRepository departmentRepository,
+            IMapper mapper
+            )
         {
             _employeeRepository = employeeRepository;
+            //_departmentRepository = departmentRepository;
+           _mapper = mapper;
         }
 
         [HttpGet] // GET :  /Department/Index
-        public IActionResult Index()
+        public IActionResult Index(string? SearchInput)
         {
+            IEnumerable<Employee> employees;
+            if (string.IsNullOrEmpty(SearchInput))
+            {
 
-            var employees = _employeeRepository.GetAll();
+
+                 employees = _employeeRepository.GetAll();
+            }
+            else
+            {
+                 employees = _employeeRepository.GetByName(SearchInput);
+            }
+            //// Dictionary :
+            //// 1.ViewData : Transfer Extra Information From Controller (Action) To View
+            //ViewData["Message"] = "Hello From ViewData";
+
+
+
+            //// 2.ViewBag  : Transfer Extra Information From Controller (Action) To View
+
+            //ViewBag.Message = new { Message = "Hello From ViewBag"};
+
+
+
+            // 3.TempData 
 
             return View(employees);
         }
@@ -27,7 +59,8 @@ namespace Company.Ali.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-
+            //var departments = _departmentRepository.GetAll();
+            //ViewData["departments"] = departments;
             return View();
         }
 
@@ -36,25 +69,28 @@ namespace Company.Ali.PL.Controllers
         {
             if (ModelState.IsValid) // Server Side Validation
             {
-
-                var employees = new Employee()
-                {
-                  Name = model.Name,
-                  Address = model.Address,
-                  Age = model.Age,
-                  CreateAt = model.CreateAt,
-                  HiringDate = model.HiringDate,
-                  Email = model.Email,
-                  IsActive = model.IsActive,
-                  IsDeleted = model.IsDeleted,
-                  Phone = model.Phone,
-                  Salary = model.Salary
-                };
+                // Manula Mapping
+                //var employees = new Employee()
+                //{
+                //  Name = model.Name,
+                //  Address = model.Address,
+                //  Age = model.Age,
+                //  CreateAt = model.CreateAt,
+                //  HiringDate = model.HiringDate,
+                //  Email = model.Email,
+                //  IsActive = model.IsActive,
+                //  IsDeleted = model.IsDeleted,
+                //  Phone = model.Phone,
+                //  Salary = model.Salary,
+                //  DepartmentId = model.DepartmentId
+                //};
+              var employees =  _mapper.Map<Employee>(model);
 
                 var Count = _employeeRepository.Add(employees);
 
                 if (Count > 0)
                 {
+                    TempData["Message"] = "Employee Is Created !!";
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -65,12 +101,14 @@ namespace Company.Ali.PL.Controllers
         [HttpGet]
         public IActionResult Details(int? Id, string viewName = "Details")
         {
-
+         
             if (Id is null) return BadRequest("Invalid Id"); //400
 
             var employee = _employeeRepository.Get(Id.Value);
 
             if (employee is null) return NotFound(new { statusCode = 404, message = $"employee With Id : {Id} is not Found" });
+
+         
 
             return View(viewName, employee);
         }
@@ -78,55 +116,62 @@ namespace Company.Ali.PL.Controllers
         [HttpGet]
         public IActionResult Edit(int? Id)
         {
+
+            //var departments = _departmentRepository.GetAll();
+            //ViewData["departments"] = departments;
+
             if (Id is null) return BadRequest("Invalid Id"); //400
 
             var employee = _employeeRepository.Get(Id.Value);
 
             if (employee is null) return NotFound(new { statusCode = 404, message = $"employee With Id : {Id} is not Found" });
 
-            var employeesDto = new CreateEmployeeDto()
-            {
-              
-                Name = employee.Name,
-                Address = employee.Address,
-                Age = employee.Age,
-                CreateAt = employee.CreateAt,
-                HiringDate = employee.HiringDate,
-                Email = employee.Email,
-                IsActive = employee.IsActive,
-                IsDeleted = employee.IsDeleted,
-                Phone = employee.Phone,
-                Salary = employee.Salary
-            };
+            //var employeesDto = new CreateEmployeeDto()
+            //{
 
-            return View(employeesDto);
+            //    Name = employee.Name,
+            //    Address = employee.Address,
+            //    Age = employee.Age,
+            //    CreateAt = employee.CreateAt,
+            //    HiringDate = employee.HiringDate,
+            //    Email = employee.Email,
+            //    IsActive = employee.IsActive,
+            //    IsDeleted = employee.IsDeleted,
+            //    Phone = employee.Phone,
+            //    Salary = employee.Salary
+
+            //};
+            var dto = _mapper.Map<CreateEmployeeDto>(employee);
+
+            return View(dto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int Id, CreateEmployeeDto model)
+        public IActionResult Edit([FromRoute] int Id, Employee model)
         {
 
             if (ModelState.IsValid)
             {
-                //if (Id != employee.Id) return BadRequest(); // 400
+                if (Id != model.Id) return BadRequest(); // 400
 
-                var employees = new Employee()
-                {
-                    Id = Id,
-                    Name = model.Name,
-                    Address = model.Address,
-                    Age = model.Age,
-                    CreateAt = model.CreateAt,
-                    HiringDate = model.HiringDate,
-                    Email = model.Email,
-                    IsActive = model.IsActive,
-                    IsDeleted = model.IsDeleted,
-                    Phone = model.Phone,
-                    Salary = model.Salary
-                };
+                //var employees = new Employee()
+                //{
+                //    Id = Id,
+                //    Name = model.Name,
+                //    Address = model.Address,
+                //    Age = model.Age,
+                //    CreateAt = model.CreateAt,
+                //    HiringDate = model.HiringDate,
+                //    Email = model.Email,
+                //    IsActive = model.IsActive,
+                //    IsDeleted = model.IsDeleted,
+                //    Phone = model.Phone,
+                //    Salary = model.Salary
+                //    , DepartmentId = model.DepartmentId
+                //};
 
-                var count = _employeeRepository.Update(employees);
+                var count = _employeeRepository.Update(model);
 
                 if (count > 0)
                 {
@@ -140,13 +185,13 @@ namespace Company.Ali.PL.Controllers
         [HttpGet]
         public IActionResult Delete(int? Id)
         {
-            //if (Id is null) return BadRequest("Invalid Id"); //400
+            if (Id is null) return BadRequest("Invalid Id"); //400
 
-            //var employee = _employeeRepository.Get(Id.Value);
+            var employee = _employeeRepository.Get(Id.Value);
 
-            //if (employee is null) return NotFound(new { statusCode = 404, message = $"employee With Id : {Id} is not Found" });
+            if (employee is null) return NotFound(new { statusCode = 404, message = $"employee With Id : {Id} is not Found" });
 
-            return Details(Id, "Delete");
+            return View(employee);
         }
 
         [HttpPost]
@@ -156,9 +201,10 @@ namespace Company.Ali.PL.Controllers
 
             if (ModelState.IsValid)
             {
+          
 
                 if (Id != model.Id) return BadRequest(); // 400
-
+                
                 var count = _employeeRepository.Delete(model);
 
                 if (count > 0)

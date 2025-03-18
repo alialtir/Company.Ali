@@ -16,5 +16,8 @@ namespace Company.Ali.DAL.Models
 
         public DateTime CreateAt { get; set; }
 
+
+        public List<Employee> Employees { get; set; }
+
     }
 }

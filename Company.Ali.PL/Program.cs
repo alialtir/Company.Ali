@@ -1,6 +1,8 @@
 using Company.Ali.BLL.Interfaces;
 using Company.Ali.BLL.Repositories;
 using Company.Ali.DAL.Data.Contexts;
+using Company.Ali.PL.Mapping;
+using Company.Ali.PL.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -14,13 +16,28 @@ namespace Company.Ali.PL
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+            
             builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>(); // Allow DI For  DepartmentRepository
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+
+            //builder.Services.AddScoped(); // Create Object Life Time Per Request - UnReachable Object
+            //builder.Services.AddTransient(); // Create Object Life Time Per Operation
+            //builder.Services.AddSingleton(); // Create Object Life Time Per App
+
+            builder.Services.AddScoped<IScopedService, ScopedService>(); // 
+            builder.Services.AddTransient<ITransentService, TransentService>();
+            builder.Services.AddSingleton<ISingletonService, SingletonService>();
+
+
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             } ); // Allow DI For CompanyDbContext
+
+            //builder.Services.AddAutoMapper(typeof(EmployeeProfile));
+            builder.Services.AddAutoMapper(M => M.AddProfile(new EmployeeProfile()));
+
 
             var app = builder.Build();
 
