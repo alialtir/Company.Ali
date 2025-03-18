@@ -1,6 +1,7 @@
 ﻿using Company.Ali.BLL.Interfaces;
 using Company.Ali.DAL.Data.Contexts;
 using Company.Ali.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +20,28 @@ namespace Company.Ali.BLL.Repositories
         }
         public IEnumerable<T> GetAll()
         {
+            if(typeof(T) == typeof(Employee))
+            {
+                return (IEnumerable<T>)_context.Employees.Include(E => E.Department).ToList();
+            }
+
+            if (typeof(T) == typeof(Department))
+            {
+                return (IEnumerable<T>)_context.Departments.Include(E => E.Employees).ToList();
+            }
             return _context.Set<T>().ToList();
         }
 
         public T? Get(int id)
         {
+            if (typeof(T) == typeof(Employee))
+            {
+                return _context.Employees.Include(E => E.Department).FirstOrDefault(E => E.Id == id) as T;
+            }
+            if (typeof(T) == typeof(Department))
+            {
+                return _context.Departments.Include(E => E.Employees).FirstOrDefault(E => E.Id == id) as T;
+            }
             return _context.Set<T>().Find(id);
         }
 

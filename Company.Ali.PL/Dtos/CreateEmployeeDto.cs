@@ -7,7 +7,7 @@ namespace Company.Ali.PL.Dtos
     {
 
         [Required(ErrorMessage = "Name is Required !!")]
-        public string Name { get; set; }
+        public string EmpName { get; set; }
 
         [Range(22,60 , ErrorMessage = "Age Must Be Between 22 and 60")]
         public int? Age { get; set; }
@@ -36,6 +36,8 @@ namespace Company.Ali.PL.Dtos
         [DisplayName("Date Of Create")]
       
         public DateTime CreateAt { get; set; }
+
+        public int? DepartmentId { get; set; }
 
     }
 }
