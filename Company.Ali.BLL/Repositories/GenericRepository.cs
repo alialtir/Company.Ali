@@ -25,10 +25,7 @@ namespace Company.Ali.BLL.Repositories
                 return (IEnumerable<T>)_context.Employees.Include(E => E.Department).ToList();
             }
 
-            if (typeof(T) == typeof(Department))
-            {
-                return (IEnumerable<T>)_context.Departments.Include(E => E.Employees).ToList();
-            }
+           
             return _context.Set<T>().ToList();
         }
 
@@ -38,10 +35,7 @@ namespace Company.Ali.BLL.Repositories
             {
                 return _context.Employees.Include(E => E.Department).FirstOrDefault(E => E.Id == id) as T;
             }
-            if (typeof(T) == typeof(Department))
-            {
-                return _context.Departments.Include(E => E.Employees).FirstOrDefault(E => E.Id == id) as T;
-            }
+      
             return _context.Set<T>().Find(id);
         }
 

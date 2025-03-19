@@ -29,9 +29,9 @@ namespace Company.Ali.DAL.Models
 
         public DateTime CreateAt { get; set; }
 
-        [DisplayName("Department")]
+       
         public int? DepartmentId { get; set; }
 
-        public Department? Department { get; set; }
+        public Department Department { get; set; }
     }
 }

@@ -10,10 +10,12 @@ namespace Company.Ali.PL.Mapping
     {
         public EmployeeProfile() 
         {
-            CreateMap<CreateEmployeeDto, Employee>()
-                .ForMember(d => d.Name, o => o.MapFrom(s => s.EmpName));
-            CreateMap<Employee, CreateEmployeeDto>()
-                  .ForMember(d => d.EmpName, o => o.MapFrom(s => s.Name)); ;
+            CreateMap<CreateEmployeeDto, Employee>();
+                //.ForMember(d => d.Name, o => o.MapFrom(s => s.EmpName));
+
+            CreateMap<Employee, CreateEmployeeDto>();
+                //.ForMember(d => d.DepartmentName, o => o.MapFrom(S => S.Department.Name));
+
         }
 
     }
