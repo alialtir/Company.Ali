@@ -9,20 +9,25 @@ namespace Company.Ali.PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _employeeRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        //private readonly IEmployeeRepository _employeeRepository;
         //private readonly IDepartmentRepository _departmentRepository;
         private readonly IMapper _mapper;
 
         // ASK CLR Create Object From DepartmentRepository
-        public EmployeeController(IEmployeeRepository 
-            employeeRepository , 
+        public EmployeeController(
+            //IEmployeeRepository 
+            //employeeRepository ,
             //IDepartmentRepository departmentRepository,
+            IUnitOfWork unitOfWork,
             IMapper mapper
             )
         {
-            _employeeRepository = employeeRepository;
+            _unitOfWork = unitOfWork;
+            //_employeeRepository = employeeRepository;
             //_departmentRepository = departmentRepository;
-           _mapper = mapper;
+            _mapper = mapper;
         }
 
         [HttpGet] // GET :  /Department/Index
@@ -33,11 +38,11 @@ namespace Company.Ali.PL.Controllers
             {
 
 
-                 employees = _employeeRepository.GetAll();
+                 employees = _unitOfWork.EmployeeRepository.GetAll();
             }
             else
             {
-                 employees = _employeeRepository.GetByName(SearchInput);
+                 employees = _unitOfWork.EmployeeRepository.GetByName(SearchInput);
             }
             //// Dictionary :
             //// 1.ViewData : Transfer Extra Information From Controller (Action) To View
@@ -59,8 +64,8 @@ namespace Company.Ali.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            //var departments = _departmentRepository.GetAll();
-            //ViewData["departments"] = departments;
+            var departments = _unitOfWork.DepartmentRepository.GetAll();
+            ViewData["departments"] = departments;
             return View();
         }
 
@@ -86,7 +91,7 @@ namespace Company.Ali.PL.Controllers
                 //};
               var employees =  _mapper.Map<Employee>(model);
 
-                var Count = _employeeRepository.Add(employees);
+                var Count = _unitOfWork.EmployeeRepository.Add(employees);
 
                 if (Count > 0)
                 {
@@ -95,34 +100,34 @@ namespace Company.Ali.PL.Controllers
                 }
             }
 
-            return View();
+            return View(model);
         }
 
         [HttpGet]
-        public IActionResult Details(int? Id, string viewName = "Details")
+        public IActionResult Details(int? Id)
         {
          
             if (Id is null) return BadRequest("Invalid Id"); //400
 
-            var employee = _employeeRepository.Get(Id.Value);
+            var employee = _unitOfWork.EmployeeRepository.Get(Id.Value);
 
             if (employee is null) return NotFound(new { statusCode = 404, message = $"employee With Id : {Id} is not Found" });
 
-         
+         var dto = _mapper.Map<CreateEmployeeDto>(employee);
 
-            return View(viewName, employee);
+            return View(dto);
         }
 
         [HttpGet]
-        public IActionResult Edit(int? Id)
+        public IActionResult Edit(int? Id ,string ViewName = "Edit")
         {
 
-            //var departments = _departmentRepository.GetAll();
-            //ViewData["departments"] = departments;
 
             if (Id is null) return BadRequest("Invalid Id"); //400
 
-            var employee = _employeeRepository.Get(Id.Value);
+            var employee = _unitOfWork.EmployeeRepository.Get(Id.Value);
+            var departments = _unitOfWork.DepartmentRepository.GetAll();
+            ViewData["departments"] =departments;
 
             if (employee is null) return NotFound(new { statusCode = 404, message = $"employee With Id : {Id} is not Found" });
 
@@ -143,17 +148,17 @@ namespace Company.Ali.PL.Controllers
             //};
             var dto = _mapper.Map<CreateEmployeeDto>(employee);
 
-            return View(dto);
+            return View(ViewName, dto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int Id, Employee model)
+        public IActionResult Edit([FromRoute] int Id, CreateEmployeeDto model, string ViewName = "Edit")
         {
 
             if (ModelState.IsValid)
             {
-                if (Id != model.Id) return BadRequest(); // 400
+
 
                 //var employees = new Employee()
                 //{
@@ -171,7 +176,12 @@ namespace Company.Ali.PL.Controllers
                 //    , DepartmentId = model.DepartmentId
                 //};
 
-                var count = _employeeRepository.Update(model);
+                var employees = _mapper.Map<Employee>(model);
+
+                employees.Id = Id; 
+
+
+                var count = _unitOfWork.EmployeeRepository.Update(employees);
 
                 if (count > 0)
                 {
@@ -179,33 +189,31 @@ namespace Company.Ali.PL.Controllers
                 }
             }
 
-            return View(model);
+            return View(ViewName, model);
         }
 
         [HttpGet]
         public IActionResult Delete(int? Id)
         {
-            if (Id is null) return BadRequest("Invalid Id"); //400
+           
 
-            var employee = _employeeRepository.Get(Id.Value);
-
-            if (employee is null) return NotFound(new { statusCode = 404, message = $"employee With Id : {Id} is not Found" });
-
-            return View(employee);
+            return Edit(Id, "Delete");
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete([FromRoute] int Id, Employee model)
+ 
+        public IActionResult Delete([FromRoute] int Id, CreateEmployeeDto model)
         {
 
             if (ModelState.IsValid)
             {
           
 
-                if (Id != model.Id) return BadRequest(); // 400
-                
-                var count = _employeeRepository.Delete(model);
+                var employees = _mapper.Map<Employee>(model);
+
+                employees.Id = Id; 
+
+                var count = _unitOfWork.EmployeeRepository.Delete(employees);
 
                 if (count > 0)
                 {

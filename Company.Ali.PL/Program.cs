@@ -1,3 +1,4 @@
+using Company.Ali.BLL;
 using Company.Ali.BLL.Interfaces;
 using Company.Ali.BLL.Repositories;
 using Company.Ali.DAL.Data.Contexts;
@@ -17,8 +18,10 @@ namespace Company.Ali.PL
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             
-            builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>(); // Allow DI For  DepartmentRepository
-            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            //builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>(); // Allow DI For  DepartmentRepository
+            //builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
             //builder.Services.AddScoped(); // Create Object Life Time Per Request - UnReachable Object

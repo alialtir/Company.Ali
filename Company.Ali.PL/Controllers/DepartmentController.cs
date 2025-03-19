@@ -11,19 +11,21 @@ namespace Company.Ali.PL.Controllers
     public class DepartmentController : Controller
     {
 
-        private readonly IDepartmentRepository _departmentrepository;
+        //private readonly IDepartmentRepository _departmentrepository;
+        private readonly IUnitOfWork _unitOfWork;
 
         // ASK CLR Create Object From DepartmentRepository
-        public DepartmentController(IDepartmentRepository departmentRepository)
+        public DepartmentController(/*IDepartmentRepository departmentRepository*/ IUnitOfWork unitOfWork)
         {
-            _departmentrepository = departmentRepository;
+            //_departmentrepository = departmentRepository;
+          _unitOfWork = unitOfWork;
         }
 
         [HttpGet] // GET :  /Department/Index
         public IActionResult Index()
         {
 
-         var departments = _departmentrepository.GetAll();
+         var departments = _unitOfWork.DepartmentRepository.GetAll();
 
             return View(departments);
         }
@@ -48,7 +50,7 @@ namespace Company.Ali.PL.Controllers
                     CreateAt = model.CreateAt
                 };
 
-              var Count = _departmentrepository.Add(department);
+              var Count = _unitOfWork.DepartmentRepository.Add(department);
 
                 if (Count > 0)
                 {
@@ -56,44 +58,58 @@ namespace Company.Ali.PL.Controllers
                 }
             }
 
-            return View();
+            return View(model);
         }
 
         [HttpGet]
-        public IActionResult Details(int? Id, string viewName = "Details")
+        public IActionResult Details(int? Id)
         {
 
             if (Id is null) return BadRequest("Invalid Id"); //400
 
-            var departments = _departmentrepository.Get(Id.Value);
+            var departments = _unitOfWork.DepartmentRepository.Get(Id.Value);
 
             if(departments is null) return NotFound( new { statusCode = 404, message = $"Department With Id : {Id} is not Found" });
 
-            return View(viewName,departments);
+            return View(departments);
         }
 
         [HttpGet]
         public IActionResult Edit(int? Id)
         {
-            //if (Id is null) return BadRequest("Invalid Id"); //400
+            if (Id is null) return BadRequest("Invalid Id"); //400
 
-            //var departments = _departmentrepository.Get(Id.Value);
+            var departments = _unitOfWork.DepartmentRepository.Get(Id.Value);
 
-            //if (departments is null) return NotFound(new { statusCode = 404, message = $"Department With Id : {Id} is not Found" });
+            if (departments is null) return NotFound(new { statusCode = 404, message = $"Department With Id : {Id} is not Found" });
 
-            return Details(Id, "Edit");
+            var dto = new CreateDepartmentDto()
+            {
+                Name = departments.Name,
+                Code = departments.Code,
+                CreateAt = departments.CreateAt
+            };
+
+            return View(dto);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int Id,Department department)
+    
+        public IActionResult Edit([FromRoute] int Id,CreateDepartmentDto model)
         {
 
             if (ModelState.IsValid)
             {
-                if (Id != department.Id) return BadRequest(); // 400
 
-                var count = _departmentrepository.Update(department);
+                var department = new Department()
+                {
+                    Id = Id,
+                    Code = model.Code,
+                    Name = model.Name,
+                    CreateAt = model.CreateAt
+                };
+
+                var count = _unitOfWork.DepartmentRepository.Update(department);
 
                 if (count > 0)
                 {
@@ -101,32 +117,46 @@ namespace Company.Ali.PL.Controllers
                 }
             }
 
-            return View(department);
+            return View(model);
         }
 
         [HttpGet]
         public IActionResult Delete(int? Id)
         {
-            //if (Id is null) return BadRequest("Invalid Id"); //400
+            if (Id is null) return BadRequest("Invalid Id"); //400
 
-            //var departments = _departmentrepository.Get(Id.Value);
+            var departments = _unitOfWork.DepartmentRepository.Get(Id.Value);
 
-            //if (departments is null) return NotFound(new { statusCode = 404, message = $"Department With Id : {Id} is not Found" });
+            if (departments is null) return NotFound(new { statusCode = 404, message = $"Department With Id : {Id} is not Found" });
 
-            return Details(Id, "Delete");
+            var dto = new CreateDepartmentDto()
+            {
+                Name = departments.Name,
+                Code = departments.Code,
+                CreateAt = departments.CreateAt
+            };
+
+            return View(dto);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Delete([FromRoute] int Id, Department department )
+      
+        public IActionResult Delete([FromRoute] int Id, CreateDepartmentDto model )
         {
 
             if (ModelState.IsValid)
             {
 
-                if (Id != department.Id) return BadRequest(); // 400
+                var department = new Department()
+                {
+                    Id = Id,
+                    Code = model.Code,
+                    Name = model.Name,
+                    CreateAt = model.CreateAt
+                };
 
-                var count = _departmentrepository.Delete(department);
+
+                var count = _unitOfWork.DepartmentRepository.Delete(department);
 
                 if (count > 0)
                 {
@@ -134,7 +164,7 @@ namespace Company.Ali.PL.Controllers
                 }
             }
 
-            return View(department);
+            return View(model);
         }
 
     }
