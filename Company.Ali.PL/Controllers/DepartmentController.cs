@@ -50,7 +50,9 @@ namespace Company.Ali.PL.Controllers
                     CreateAt = model.CreateAt
                 };
 
-              var Count = _unitOfWork.DepartmentRepository.Add(department);
+               _unitOfWork.DepartmentRepository.Add(department);
+
+                var Count = _unitOfWork.Complete();
 
                 if (Count > 0)
                 {
@@ -109,9 +111,11 @@ namespace Company.Ali.PL.Controllers
                     CreateAt = model.CreateAt
                 };
 
-                var count = _unitOfWork.DepartmentRepository.Update(department);
+               _unitOfWork.DepartmentRepository.Update(department);
 
-                if (count > 0)
+                var Count = _unitOfWork.Complete();
+
+                if (Count > 0)
                 {
                     return RedirectToAction(nameof(Index));
                 }
@@ -156,9 +160,11 @@ namespace Company.Ali.PL.Controllers
                 };
 
 
-                var count = _unitOfWork.DepartmentRepository.Delete(department);
+              _unitOfWork.DepartmentRepository.Delete(department);
 
-                if (count > 0)
+                var Count = _unitOfWork.Complete();
+
+                if (Count > 0)
                 {
                     return RedirectToAction(nameof(Index));
                 }
