@@ -91,7 +91,12 @@ namespace Company.Ali.PL.Controllers
                 //};
               var employees =  _mapper.Map<Employee>(model);
 
-                var Count = _unitOfWork.EmployeeRepository.Add(employees);
+                _unitOfWork.EmployeeRepository.Add(employees);
+                //_unitOfWork.EmployeeRepository.Update(employees);
+                //_unitOfWork.EmployeeRepository.Delete(employees);
+
+
+                var Count = _unitOfWork.Complete();
 
                 if (Count > 0)
                 {
@@ -181,9 +186,11 @@ namespace Company.Ali.PL.Controllers
                 employees.Id = Id; 
 
 
-                var count = _unitOfWork.EmployeeRepository.Update(employees);
+               _unitOfWork.EmployeeRepository.Update(employees);
 
-                if (count > 0)
+                var Count = _unitOfWork.Complete();
+
+                if (Count > 0)
                 {
                     return RedirectToAction(nameof(Index));
                 }
@@ -213,9 +220,11 @@ namespace Company.Ali.PL.Controllers
 
                 employees.Id = Id; 
 
-                var count = _unitOfWork.EmployeeRepository.Delete(employees);
+              _unitOfWork.EmployeeRepository.Delete(employees);
 
-                if (count > 0)
+                var Count = _unitOfWork.Complete();
+
+                if (Count > 0)
                 {
                     return RedirectToAction(nameof(Index));
                 }

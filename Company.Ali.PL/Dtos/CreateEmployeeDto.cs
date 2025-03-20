@@ -6,6 +6,7 @@ namespace Company.Ali.PL.Dtos
     public class CreateEmployeeDto
     {
 
+
         [Required(ErrorMessage = "Name is Required !!")]
         public string Name { get; set; }
 
