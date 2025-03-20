@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Company.Ali.BLL.Interfaces;
+using Company.Ali.DAL.Helper;
 using Company.Ali.DAL.Models;
 using Company.Ali.PL.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
+using System.Reflection.Metadata;
 
 namespace Company.Ali.PL.Controllers
 {
@@ -89,6 +91,16 @@ namespace Company.Ali.PL.Controllers
                 //  Salary = model.Salary,
                 //  DepartmentId = model.DepartmentId
                 //};
+
+                if(model.Image is not null)
+                {
+
+
+                 model.ImageName =  DocumentSettings.UploadFile(model.Image, "Images");
+                }
+
+               
+
               var employees =  _mapper.Map<Employee>(model);
 
                 _unitOfWork.EmployeeRepository.Add(employees);
