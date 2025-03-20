@@ -43,5 +43,9 @@ namespace Company.Ali.PL.Dtos
 
         public string? DepartmentName { get; set; }
 
+        public string? ImageName { get; set; }
+
+        public IFormFile? Image { get; set; }
+
     }
 }
