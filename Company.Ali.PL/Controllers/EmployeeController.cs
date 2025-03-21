@@ -132,6 +132,8 @@ namespace Company.Ali.PL.Controllers
 
          var dto = _mapper.Map<CreateEmployeeDto>(employee);
 
+            ViewBag.EmployeeId = Id;
+
             return View(dto);
         }
 
@@ -193,6 +195,19 @@ namespace Company.Ali.PL.Controllers
                 //    , DepartmentId = model.DepartmentId
                 //};
 
+
+                if(model.ImageName is not null && model.Image is not null)
+                {
+                    DocumentSettings.DeleteFile(model.ImageName, "images");
+                }
+
+                if (model.Image is not null)
+                {
+                 model.ImageName =   DocumentSettings.UploadFile(model.Image, "images");
+                }
+
+
+
                 var employees = _mapper.Map<Employee>(model);
 
                 employees.Id = Id; 
@@ -238,6 +253,11 @@ namespace Company.Ali.PL.Controllers
 
                 if (Count > 0)
                 {
+                    if (model.ImageName is not null)
+                    {
+                        DocumentSettings.DeleteFile(model.ImageName, "images");
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
             }
