@@ -33,18 +33,18 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet] // GET :  /Department/Index
-        public IActionResult Index(string? SearchInput)
+        public async Task<IActionResult> Index(string? SearchInput)
         {
             IEnumerable<Employee> employees;
             if (string.IsNullOrEmpty(SearchInput))
             {
 
 
-                 employees = _unitOfWork.EmployeeRepository.GetAll();
+                 employees = await _unitOfWork.EmployeeRepository.GetAllAsync();
             }
             else
             {
-                 employees = _unitOfWork.EmployeeRepository.GetByName(SearchInput);
+                 employees = await _unitOfWork.EmployeeRepository.GetByNameAsync(SearchInput);
             }
             //// Dictionary :
             //// 1.ViewData : Transfer Extra Information From Controller (Action) To View
@@ -64,15 +64,15 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var departments = _unitOfWork.DepartmentRepository.GetAll();
+            var departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
             ViewData["departments"] = departments;
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(CreateEmployeeDto model)
+        public async Task<IActionResult> Create(CreateEmployeeDto model)
         {
             if (ModelState.IsValid) // Server Side Validation
             {
@@ -103,12 +103,12 @@ namespace Company.Ali.PL.Controllers
 
               var employees =  _mapper.Map<Employee>(model);
 
-                _unitOfWork.EmployeeRepository.Add(employees);
+              await  _unitOfWork.EmployeeRepository.AddAsync(employees);
                 //_unitOfWork.EmployeeRepository.Update(employees);
                 //_unitOfWork.EmployeeRepository.Delete(employees);
 
 
-                var Count = _unitOfWork.Complete();
+                var Count = await _unitOfWork.CompleteAsync();
 
                 if (Count > 0)
                 {
@@ -121,12 +121,12 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int? Id)
+        public async Task<IActionResult> Details(int? Id)
         {
-         
+       
             if (Id is null) return BadRequest("Invalid Id"); //400
 
-            var employee = _unitOfWork.EmployeeRepository.Get(Id.Value);
+            var employee = await _unitOfWork.EmployeeRepository.GetAsync(Id.Value);
 
             if (employee is null) return NotFound(new { statusCode = 404, message = $"employee With Id : {Id} is not Found" });
 
@@ -138,14 +138,14 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int? Id ,string ViewName = "Edit")
+        public async Task<IActionResult> Edit(int? Id ,string ViewName = "Edit")
         {
 
 
             if (Id is null) return BadRequest("Invalid Id"); //400
 
-            var employee = _unitOfWork.EmployeeRepository.Get(Id.Value);
-            var departments = _unitOfWork.DepartmentRepository.GetAll();
+            var employee = await _unitOfWork.EmployeeRepository.GetAsync(Id.Value);
+            var departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
             ViewData["departments"] =departments;
 
             if (employee is null) return NotFound(new { statusCode = 404, message = $"employee With Id : {Id} is not Found" });
@@ -172,7 +172,7 @@ namespace Company.Ali.PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int Id, CreateEmployeeDto model, string ViewName = "Edit")
+        public async Task<IActionResult> Edit([FromRoute] int Id, CreateEmployeeDto model, string ViewName = "Edit")
         {
 
             if (ModelState.IsValid)
@@ -215,7 +215,7 @@ namespace Company.Ali.PL.Controllers
 
                _unitOfWork.EmployeeRepository.Update(employees);
 
-                var Count = _unitOfWork.Complete();
+                var Count = await _unitOfWork.CompleteAsync();
 
                 if (Count > 0)
                 {
@@ -227,16 +227,16 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(int? Id)
+        public async Task<IActionResult> Delete(int? Id)
         {
            
 
-            return Edit(Id, "Delete");
+            return await Edit(Id, "Delete");
         }
 
         [HttpPost]
  
-        public IActionResult Delete([FromRoute] int Id, CreateEmployeeDto model)
+        public async Task<IActionResult> Delete([FromRoute] int Id, CreateEmployeeDto model)
         {
 
             if (ModelState.IsValid)
@@ -249,7 +249,7 @@ namespace Company.Ali.PL.Controllers
 
               _unitOfWork.EmployeeRepository.Delete(employees);
 
-                var Count = _unitOfWork.Complete();
+                var Count = await _unitOfWork.CompleteAsync();
 
                 if (Count > 0)
                 {

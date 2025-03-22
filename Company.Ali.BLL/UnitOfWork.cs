@@ -28,14 +28,19 @@ namespace Company.Ali.BLL
          
         }
 
-        public int Complete()
+        public async Task<int> CompleteAsync()
         {
-            return _context.SaveChanges();
+            return await _context.SaveChangesAsync();
         }
 
         public void Dispose()
         {
            _context.Dispose();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+         await _context.DisposeAsync();
         }
     }
 }

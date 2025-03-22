@@ -22,10 +22,10 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet] // GET :  /Department/Index
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
 
-         var departments = _unitOfWork.DepartmentRepository.GetAll();
+         var departments = await _unitOfWork.DepartmentRepository.GetAllAsync();
 
             return View(departments);
         }
@@ -38,7 +38,7 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateDepartmentDto model)
+        public async Task<IActionResult> Create(CreateDepartmentDto model)
         {
             if (ModelState.IsValid) // Server Side Validation
             {
@@ -50,9 +50,9 @@ namespace Company.Ali.PL.Controllers
                     CreateAt = model.CreateAt
                 };
 
-               _unitOfWork.DepartmentRepository.Add(department);
+             await  _unitOfWork.DepartmentRepository.AddAsync(department);
 
-                var Count = _unitOfWork.Complete();
+                var Count = await _unitOfWork.CompleteAsync();
 
                 if (Count > 0)
                 {
@@ -64,12 +64,12 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int? Id)
+        public async Task<IActionResult> Details(int? Id)
         {
 
             if (Id is null) return BadRequest("Invalid Id"); //400
 
-            var departments = _unitOfWork.DepartmentRepository.Get(Id.Value);
+            var departments = await _unitOfWork.DepartmentRepository.GetAsync(Id.Value);
 
             if(departments is null) return NotFound( new { statusCode = 404, message = $"Department With Id : {Id} is not Found" });
 
@@ -77,11 +77,11 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int? Id)
+        public async Task<IActionResult> Edit(int? Id)
         {
             if (Id is null) return BadRequest("Invalid Id"); //400
 
-            var departments = _unitOfWork.DepartmentRepository.Get(Id.Value);
+            var departments = await _unitOfWork.DepartmentRepository.GetAsync(Id.Value);
 
             if (departments is null) return NotFound(new { statusCode = 404, message = $"Department With Id : {Id} is not Found" });
 
@@ -97,7 +97,7 @@ namespace Company.Ali.PL.Controllers
 
         [HttpPost]
     
-        public IActionResult Edit([FromRoute] int Id,CreateDepartmentDto model)
+        public async Task<IActionResult> Edit([FromRoute] int Id,CreateDepartmentDto model)
         {
 
             if (ModelState.IsValid)
@@ -113,7 +113,7 @@ namespace Company.Ali.PL.Controllers
 
                _unitOfWork.DepartmentRepository.Update(department);
 
-                var Count = _unitOfWork.Complete();
+                var Count = await _unitOfWork.CompleteAsync();
 
                 if (Count > 0)
                 {
@@ -125,11 +125,11 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(int? Id)
+        public async Task<IActionResult> Delete(int? Id)
         {
             if (Id is null) return BadRequest("Invalid Id"); //400
 
-            var departments = _unitOfWork.DepartmentRepository.Get(Id.Value);
+            var departments = await _unitOfWork.DepartmentRepository.GetAsync(Id.Value);
 
             if (departments is null) return NotFound(new { statusCode = 404, message = $"Department With Id : {Id} is not Found" });
 
@@ -145,7 +145,7 @@ namespace Company.Ali.PL.Controllers
 
         [HttpPost]
       
-        public IActionResult Delete([FromRoute] int Id, CreateDepartmentDto model )
+        public async Task<IActionResult> Delete([FromRoute] int Id, CreateDepartmentDto model )
         {
 
             if (ModelState.IsValid)
@@ -162,7 +162,7 @@ namespace Company.Ali.PL.Controllers
 
               _unitOfWork.DepartmentRepository.Delete(department);
 
-                var Count = _unitOfWork.Complete();
+                var  Count = await _unitOfWork.CompleteAsync();
 
                 if (Count > 0)
                 {
