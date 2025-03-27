@@ -2,8 +2,10 @@ using Company.Ali.BLL;
 using Company.Ali.BLL.Interfaces;
 using Company.Ali.BLL.Repositories;
 using Company.Ali.DAL.Data.Contexts;
+using Company.Ali.DAL.Models;
 using Company.Ali.PL.Mapping;
 using Company.Ali.PL.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -40,6 +42,9 @@ namespace Company.Ali.PL
 
             //builder.Services.AddAutoMapper(typeof(EmployeeProfile));
             builder.Services.AddAutoMapper(M => M.AddProfile(new EmployeeProfile()));
+
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
+                            .AddEntityFrameworkStores<CompanyDbContext>();
 
 
             var app = builder.Build();
