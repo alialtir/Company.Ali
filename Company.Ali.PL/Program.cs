@@ -47,6 +47,13 @@ namespace Company.Ali.PL
                             .AddEntityFrameworkStores<CompanyDbContext>();
 
 
+            builder.Services.ConfigureApplicationCookie(config =>
+            {
+                config.LoginPath = "/Account/SignIn";
+            }
+            );
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -61,6 +68,9 @@ namespace Company.Ali.PL
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
 
             app.MapControllerRoute(

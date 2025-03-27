@@ -3,12 +3,15 @@ using Company.Ali.BLL.Interfaces;
 using Company.Ali.DAL.Helper;
 using Company.Ali.DAL.Models;
 using Company.Ali.PL.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using System.Reflection.Metadata;
 
 namespace Company.Ali.PL.Controllers
 {
+
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
