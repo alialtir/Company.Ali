@@ -2,12 +2,14 @@
 using Company.Ali.BLL.Repositories;
 using Company.Ali.DAL.Models;
 using Company.Ali.PL.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Ali.PL.Controllers
 {
     // MVC Controller
 
+    [Authorize]
     public class DepartmentController : Controller
     {
 
