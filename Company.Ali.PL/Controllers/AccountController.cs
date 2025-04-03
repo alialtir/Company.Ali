@@ -3,6 +3,8 @@ using Company.Ali.DAL.Models;
 using Company.Ali.DAL.Models.Sms;
 using Company.Ali.PL.Dtos;
 using Company.Ali.PL.Helper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -298,5 +300,35 @@ namespace Company.Ali.PL.Controllers
         }
 
         #endregion
+
+
+        public IActionResult GoogleLogin()
+        {
+            var prop = new AuthenticationProperties()
+            {
+                RedirectUri = Url.Action("GoogleResponse")
+            };
+            return Challenge(prop, GoogleDefaults.AuthenticationScheme);
+        }
+
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+
+            var cliams = result.Principal.Identities.FirstOrDefault().Claims.Select(
+                claim => new
+                {
+                    claim.Type,
+                    claim.Value,
+                    claim.Issuer,
+                    claim.OriginalIssuer,
+
+                }
+
+
+                );
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

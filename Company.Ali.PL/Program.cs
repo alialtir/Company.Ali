@@ -7,6 +7,7 @@ using Company.Ali.PL.Helper;
 using Company.Ali.PL.Mapping;
 using Company.Ali.PL.Services;
 using Company.Ali.PL.Settings;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -66,6 +67,17 @@ namespace Company.Ali.PL
 
             }
             );
+
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+            
+                }
+            ).AddGoogle( o => {
+                o.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+            });
 
 
             var app = builder.Build();
