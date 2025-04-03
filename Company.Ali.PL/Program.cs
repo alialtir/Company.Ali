@@ -7,6 +7,7 @@ using Company.Ali.PL.Helper;
 using Company.Ali.PL.Mapping;
 using Company.Ali.PL.Services;
 using Company.Ali.PL.Settings;
+using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +79,18 @@ namespace Company.Ali.PL
                 o.ClientId = builder.Configuration["Authentication:Google:ClientId"];
                 o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
             });
+
+
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = FacebookDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = FacebookDefaults.AuthenticationScheme;
+
+            }
+     ).AddFacebook(o => {
+         o.ClientId = builder.Configuration["Authentication:FaceBook:ClientId"];
+         o.ClientSecret = builder.Configuration["Authentication:FaceBook:ClientSecret"];
+     });
 
 
             var app = builder.Build();
