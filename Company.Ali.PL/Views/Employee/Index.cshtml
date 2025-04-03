@@ -36,7 +36,7 @@
     <div class="container m-4">
 <div class="row">
             <div class="col-6">
-                <input id="SearchInput" placeholder="Search By Name" name="SearchInput" class="form-control" />
+                <input id="searchInp" placeholder="Search By Name" name="SearchInput" class="form-control" />
             </div>
             <div class="col-6">
 
@@ -120,3 +120,26 @@
 
     </div>
 }
+
+<script>
+    $(document).ready(function () {
+        const searchBar = $('#searchInp');
+        const table = $('table');
+
+        searchBar.on('keyup', function (event) {
+            var searchValue = searchBar.val();
+
+            $.ajax({
+                url: '/Employee/Search',
+                type: 'Get',
+                data: { Search: searchValue },
+                success: function (result) {
+                    table.html(result);
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>

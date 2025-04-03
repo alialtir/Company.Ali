@@ -63,6 +63,7 @@ namespace Company.Ali.PL
             builder.Services.ConfigureApplicationCookie(config =>
             {
                 config.LoginPath = "/Account/SignIn";
+
             }
             );
 

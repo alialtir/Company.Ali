@@ -36,10 +36,10 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet] // GET :  /Department/Index
-        public async Task<IActionResult> Index(string? SearchInput)
+        public async Task<IActionResult> Index(string? Search)
         {
             IEnumerable<Employee> employees;
-            if (string.IsNullOrEmpty(SearchInput))
+            if (string.IsNullOrEmpty(Search))
             {
 
 
@@ -47,7 +47,7 @@ namespace Company.Ali.PL.Controllers
             }
             else
             {
-                 employees = await _unitOfWork.EmployeeRepository.GetByNameAsync(SearchInput);
+                 employees = await _unitOfWork.EmployeeRepository.GetByNameAsync(Search);
             }
             //// Dictionary :
             //// 1.ViewData : Transfer Extra Information From Controller (Action) To View
@@ -64,6 +64,37 @@ namespace Company.Ali.PL.Controllers
             // 3.TempData 
 
             return View(employees);
+        }
+
+
+        public async Task<IActionResult> Search(string? Search)
+        {
+            IEnumerable<Employee> employees;
+            if (string.IsNullOrEmpty(Search))
+            {
+
+
+                employees = await _unitOfWork.EmployeeRepository.GetAllAsync();
+            }
+            else
+            {
+                employees = await _unitOfWork.EmployeeRepository.GetByNameAsync(Search);
+            }
+            //// Dictionary :
+            //// 1.ViewData : Transfer Extra Information From Controller (Action) To View
+            //ViewData["Message"] = "Hello From ViewData";
+
+
+
+            //// 2.ViewBag  : Transfer Extra Information From Controller (Action) To View
+
+            //ViewBag.Message = new { Message = "Hello From ViewBag"};
+
+
+
+            // 3.TempData 
+
+            return PartialView("EmployeePartialView/EmployeeTablePartialView", employees);
         }
 
         [HttpGet]

@@ -127,6 +127,7 @@ namespace Company.Ali.PL.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? Id)
         {
             if (Id is null) return BadRequest("Invalid Id"); //400
