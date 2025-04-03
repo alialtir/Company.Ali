@@ -242,6 +242,11 @@ namespace Company.Ali.PL.Controllers
             return View();
         }
 
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
         public IActionResult CheckYourPhone()
         {
             return View();
