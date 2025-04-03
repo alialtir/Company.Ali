@@ -1,11 +1,13 @@
 ﻿using Company.Ali.DAL.Helper;
 using Company.Ali.DAL.Models;
 using Company.Ali.PL.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Company.Ali.PL.Controllers
 {
+    [Authorize]
     public class UserController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
