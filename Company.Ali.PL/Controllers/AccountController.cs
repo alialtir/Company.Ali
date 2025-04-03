@@ -302,7 +302,7 @@ namespace Company.Ali.PL.Controllers
 
         #endregion
 
-
+        [HttpGet]
         public IActionResult GoogleLogin()
         {
             var prop = new AuthenticationProperties()
@@ -311,6 +311,8 @@ namespace Company.Ali.PL.Controllers
             };
             return Challenge(prop, GoogleDefaults.AuthenticationScheme);
         }
+
+        [HttpGet]
 
         public async Task<IActionResult> GoogleResponse()
         {
@@ -332,6 +334,7 @@ namespace Company.Ali.PL.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
 
         public IActionResult FaceBookLogin()
         {
@@ -341,6 +344,7 @@ namespace Company.Ali.PL.Controllers
             };
             return Challenge(prop, FacebookDefaults.AuthenticationScheme);
         }
+        [HttpGet]
 
         public async Task<IActionResult> FaceBookResponse()
         {

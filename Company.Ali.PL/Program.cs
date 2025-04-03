@@ -21,6 +21,31 @@ namespace Company.Ali.PL
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+
+            }
+).AddGoogle(o => {
+    o.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+});
+
+
+            builder.Services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = FacebookDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = FacebookDefaults.AuthenticationScheme;
+
+            }
+     ).AddFacebook(o => {
+         o.ClientId = builder.Configuration["Authentication:FaceBook:ClientId"];
+         o.ClientSecret = builder.Configuration["Authentication:FaceBook:ClientSecret"];
+     });
+
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             
@@ -48,6 +73,9 @@ namespace Company.Ali.PL
             builder.Services.AddAutoMapper(M => M.AddProfile(new EmployeeProfile()));
 
 
+    
+
+
             builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
 
             builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection(nameof(TwilioSettings)));
@@ -62,36 +90,14 @@ namespace Company.Ali.PL
                             .AddDefaultTokenProviders();
 
 
+
+
             builder.Services.ConfigureApplicationCookie(config =>
             {
                 config.LoginPath = "/Account/SignIn";
 
             }
-            );
-
-            builder.Services.AddAuthentication(o =>
-            {
-                o.DefaultAuthenticateScheme = GoogleDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
-            
-                }
-            ).AddGoogle( o => {
-                o.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-                o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-            });
-
-
-            builder.Services.AddAuthentication(o =>
-            {
-                o.DefaultAuthenticateScheme = FacebookDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = FacebookDefaults.AuthenticationScheme;
-
-            }
-     ).AddFacebook(o => {
-         o.ClientId = builder.Configuration["Authentication:FaceBook:ClientId"];
-         o.ClientSecret = builder.Configuration["Authentication:FaceBook:ClientSecret"];
-     });
-
+);
 
             var app = builder.Build();
 
