@@ -3,8 +3,10 @@ using Company.Ali.BLL.Interfaces;
 using Company.Ali.BLL.Repositories;
 using Company.Ali.DAL.Data.Contexts;
 using Company.Ali.DAL.Models;
+using Company.Ali.PL.Helper;
 using Company.Ali.PL.Mapping;
 using Company.Ali.PL.Services;
+using Company.Ali.PL.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -42,6 +44,16 @@ namespace Company.Ali.PL
 
             //builder.Services.AddAutoMapper(typeof(EmployeeProfile));
             builder.Services.AddAutoMapper(M => M.AddProfile(new EmployeeProfile()));
+
+
+            builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
+
+            builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection(nameof(TwilioSettings)));
+
+            builder.Services.AddScoped<IMailService, MailService>();
+
+            builder.Services.AddScoped<ITwilioService, TwilioService>();
+
 
             builder.Services.AddIdentity<AppUser, IdentityRole>()
                             .AddEntityFrameworkStores<CompanyDbContext>()

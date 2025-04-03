@@ -1,6 +1,8 @@
 ﻿using Company.Ali.DAL.Helper;
 using Company.Ali.DAL.Models;
+using Company.Ali.DAL.Models.Sms;
 using Company.Ali.PL.Dtos;
+using Company.Ali.PL.Helper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -11,11 +13,15 @@ namespace Company.Ali.PL.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly IMailService _mailService;
+        private readonly ITwilioService _twilioService;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMailService mailService, ITwilioService twilioService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _mailService = mailService;
+            _twilioService = twilioService;
         }
 
         #region SignUp
@@ -176,13 +182,53 @@ namespace Company.Ali.PL.Controllers
 
                     // Send Email
 
-                  var flag =  EmailSettings.SendEmail(email);
-                    if (flag) 
-                    {
-                        // Check Your Inbox
+                    //var flag =  EmailSettings.SendEmail(email);
+                       _mailService.SendEmail(email);
 
                         return RedirectToAction("CheckYourInbox");
-                    }
+                    
+                }
+
+            }
+            ModelState.AddModelError("", "Invalid Reset Password Operation");
+            return View("ForgetPassword", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendResetPasswordSms(ForgetPasswordDto model)
+        {
+
+            if (ModelState.IsValid)
+            {
+
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user is not null)
+                {
+                    // Generate Token
+
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+
+
+                    // Create URL
+
+                    var url = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, Request.Scheme);
+
+
+
+                    // Create Sms
+
+                    var sms = new Sms()
+                    {
+                        To = user.PhoneNumber,
+
+                        Body = url
+                    };
+
+                    _twilioService.SendSms(sms);
+    
+                    return RedirectToAction(nameof(CheckYourPhone));
+
                 }
 
             }
@@ -192,6 +238,11 @@ namespace Company.Ali.PL.Controllers
 
         [HttpGet]
         public IActionResult CheckYourInbox()
+        {
+            return View();
+        }
+
+        public IActionResult CheckYourPhone()
         {
             return View();
         }

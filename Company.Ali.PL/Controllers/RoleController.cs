@@ -1,12 +1,14 @@
 ﻿using Company.Ali.DAL.Helper;
 using Company.Ali.DAL.Models;
 using Company.Ali.PL.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Company.Ali.PL.Controllers
 {
+    [Authorize]
     public class RoleController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManger;
