@@ -9,6 +9,7 @@ namespace Company.Ali.PL.Controllers
 {
     // MVC Controller
 
+
     [Authorize]
     public class DepartmentController : Controller
     {
