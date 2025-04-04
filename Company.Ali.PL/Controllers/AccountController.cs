@@ -4,7 +4,6 @@ using Company.Ali.DAL.Models.Sms;
 using Company.Ali.PL.Dtos;
 using Company.Ali.PL.Helper;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -302,7 +301,7 @@ namespace Company.Ali.PL.Controllers
 
         #endregion
 
-        [HttpGet]
+
         public IActionResult GoogleLogin()
         {
             var prop = new AuthenticationProperties()
@@ -312,43 +311,9 @@ namespace Company.Ali.PL.Controllers
             return Challenge(prop, GoogleDefaults.AuthenticationScheme);
         }
 
-        [HttpGet]
-
         public async Task<IActionResult> GoogleResponse()
         {
             var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
-
-            var cliams = result.Principal.Identities.FirstOrDefault().Claims.Select(
-                claim => new
-                {
-                    claim.Type,
-                    claim.Value,
-                    claim.Issuer,
-                    claim.OriginalIssuer,
-
-                }
-
-
-                );
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpGet]
-
-        public IActionResult FaceBookLogin()
-        {
-            var prop = new AuthenticationProperties()
-            {
-                RedirectUri = Url.Action("FaceBookResponse")
-            };
-            return Challenge(prop, FacebookDefaults.AuthenticationScheme);
-        }
-        [HttpGet]
-
-        public async Task<IActionResult> FaceBookResponse()
-        {
-            var result = await HttpContext.AuthenticateAsync(FacebookDefaults.AuthenticationScheme);
 
             var cliams = result.Principal.Identities.FirstOrDefault().Claims.Select(
                 claim => new

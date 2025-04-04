@@ -9,7 +9,7 @@ namespace Company.Ali.PL.Controllers
 {
     // MVC Controller
 
-    [Authorize(Roles = "Admin")]
+
     [Authorize]
     public class DepartmentController : Controller
     {
